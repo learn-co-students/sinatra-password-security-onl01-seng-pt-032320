@@ -2,7 +2,7 @@ require_relative '../db/migrate/20180314210852_create_users.rb'
 
 require_relative 'spec_helper'
 
-describe 'users' do
+describe 'user' do
   before do
     sql = "DROP TABLE IF EXISTS users"
     ActiveRecord::Base.connection.execute(sql)

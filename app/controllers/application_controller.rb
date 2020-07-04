@@ -17,7 +17,12 @@ class ApplicationController < Sinatra::Base
 	end
 
 	post "/signup" do
-		#your code here!
+		user = User.new(:username => params[:username], :password => params[:password])
+		if user.save
+			redirect "/login"
+		else
+			redirect "/failure"
+		end
 	end
 
 	get "/login" do
@@ -25,11 +30,23 @@ class ApplicationController < Sinatra::Base
 	end
 
 	post "/login" do
-		#your code here!
+		user = User.find_by(:username => params[:username])
+		if user && user.authenticate(params[:password])
+			puts "You made it!!!!"
+			puts user.id
+			session[:id] = user.id
+			session[:username] = user.username
+			puts session[:id]
+			redirect "/success"
+		else
+			redirect "failure"
+		end
 	end
 
 	get "/success" do
 		if logged_in?
+			puts "you are loggted in !!!!@@@@@"
+			@user = session[:username]
 			erb :success
 		else
 			redirect "/login"
@@ -47,11 +64,13 @@ class ApplicationController < Sinatra::Base
 
 	helpers do
 		def logged_in?
-			!!session[:user_id]
+			puts !!session[:id]
+			!!session[:id]
+			
 		end
 
 		def current_user
-			User.find(session[:user_id])
+			@user ||=User.find_by_id(session[:user_id]) if logged_in?
 		end
 	end
 
